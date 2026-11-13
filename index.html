@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>P25: Skills for Hire | Campus Edition</title>
+    
+    <!-- Tailwind CSS CDN for rapid, responsive layout -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Font: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Link to our custom CSS file -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-slate-50 text-slate-800">
+
+    <!-- ================= HEADER / NAVBAR ================= -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-40">
+        <div class="max-w-6xl mx-auto px-4 py-4 flex flex-wrap justify-between items-center gap-4">
+            <div class="flex items-center gap-3">
+                <div class="bg-indigo-600 text-white font-bold px-3 py-1.5 rounded-lg text-lg">P25</div>
+                <div>
+                    <h1 class="font-bold text-lg leading-tight">Skills for Hire <span class="text-xs bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full font-medium ml-1">Campus Edition</span></h1>
+                    <p class="text-xs text-slate-500">Verified Student Micro-Gigs & Escrow Protection</p>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex items-center gap-3">
+                <button onclick="resetDemoData()" class="text-xs text-slate-500 hover:text-slate-800 underline">
+                    Reset Demo Data
+                </button>
+                <button onclick="togglePostGigModal(true)" class="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition shadow-sm">
+                    + Post Campus Gig
+                </button>
+            </div>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <nav class="max-w-6xl mx-auto px-4 flex gap-6 overflow-x-auto text-sm font-medium border-t border-slate-100">
+            <button onclick="switchTab('gigs')" id="tab-gigs" class="tab-btn active-tab py-3">1. Micro-Gig Board</button>
+            <button onclick="switchTab('talent')" id="tab-talent" class="tab-btn py-3">2. Verified Skill Directory</button>
+            <button onclick="switchTab('scope')" id="tab-scope" class="tab-btn py-3">3. Smart Scope & Escrow</button>
+            <button onclick="switchTab('tracker')" id="tab-tracker" class="tab-btn py-3">4. Active Gig Tracker</button>
+        </nav>
+    </header>
+
+    <!-- ================= MAIN CONTENT CONTAINER ================= -->
+    <main class="max-w-6xl mx-auto px-4 py-8">
+
+        <!-- PAIN POINT BANNER (Explains to evaluators what this prototype solves) -->
+        <div class="bg-indigo-50 border border-indigo-100 rounded-xl p-4 mb-8 flex flex-wrap justify-between items-center gap-4">
+            <div>
+                <h2 class="text-sm font-bold text-indigo-950">Solving the 3 Campus Interview Pain Points:</h2>
+                <p class="text-xs text-indigo-800 mt-0.5">
+                    <span class="font-semibold">1. Trust:</span> UMS ID & Startup-Cell Badges &bull; 
+                    <span class="font-semibold">2. Payment Issues:</span> 50% Upfront Escrow & Fair-Price Guardrails &bull; 
+                    <span class="font-semibold">3. Late Submissions:</span> Locked Scope & Deadline Timers
+                </p>
+            </div>
+            <span class="text-xs bg-white text-indigo-700 px-3 py-1 rounded-md border border-indigo-200 font-medium">Prototype v1.0</span>
+        </div>
+
+        <!-- ================= TAB 1: MICRO-GIG BOARD ================= -->
+        <section id="view-gigs" class="tab-view">
+            <div class="flex flex-wrap justify-between items-center gap-4 mb-6">
+                <div>
+                    <h2 class="text-xl font-bold">Open Campus Micro-Gigs</h2>
+                    <p class="text-sm text-slate-500">Posted by verified student clubs, event teams, and peers.</p>
+                </div>
+                <!-- Category Filter -->
+                <select id="gig-filter" onchange="renderGigs()" class="border border-slate-300 rounded-lg px-3 py-2 text-sm bg-white">
+                    <option value="All">All Categories</option>
+                    <option value="Design">Design</option>
+                    <option value="Code">Code</option>
+                    <option value="Video Editing">Video Editing</option>
+                    <option value="Photography">Photography</option>
+                </select>
+            </div>
+
+            <!-- Dynamic Gig Cards Grid (Populated by app.js) -->
+            <div id="gigs-container" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+        </section>
+
+        <!-- ================= TAB 2: VERIFIED SKILL DIRECTORY ================= -->
+        <section id="view-talent" class="tab-view hidden">
+            <div class="mb-6">
+                <h2 class="text-xl font-bold">Verified Student Freelancers</h2>
+                <p class="text-sm text-slate-500">Every student is verified via University ID and peer-reviewed on past deliveries.</p>
+            </div>
+
+            <!-- Dynamic Freelancer Grid (Populated by app.js) -->
+            <div id="talent-container" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+        </section>
+
+        <!-- ================= TAB 3: SMART SCOPE & ESCROW BUILDER ================= -->
+        <section id="view-scope" class="tab-view hidden">
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- Left 2 Columns: Contract Form -->
+                <div class="md:col-span-2 bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+                    <h2 class="text-xl font-bold mb-1">Smart Scope & Escrow Contract</h2>
+                    <p class="text-sm text-slate-500 mb-6">Eliminates late submissions, endless revisions, and payment ghosting before work begins.</p>
+
+                    <form id="scope-form" onsubmit="createEscrowContract(event)" class="space-y-4">
+                        <div class="grid sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-semibold uppercase text-slate-600 mb-1">Project / Gig Title</label>
+                                <input type="text" id="contract-title" required placeholder="e.g., Hackathon Event Poster" class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold uppercase text-slate-600 mb-1">Skill Category</label>
+                                <select id="contract-category" onchange="checkFairPriceInScope()" class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm bg-white">
+                                    <option value="Design">Design (Min Fair Price: ₹300)</option>
+                                    <option value="Code">Code (Min Fair Price: ₹800)</option>
+                                    <option value="Video Editing">Video Editing (Min Fair Price: ₹500)</option>
+                                    <option value="Photography">Photography (Min Fair Price: ₹600)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="grid sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-semibold uppercase text-slate-600 mb-1">Client Name / Club</label>
+                                <input type="text" id="contract-client" required placeholder="e.g., Coding Club Treasurer" class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold uppercase text-slate-600 mb-1">Assigned Freelancer (UMS ID)</label>
+                                <input type="text" id="contract-freelancer" required placeholder="e.g., Aarav Sharma (12204581)" class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold uppercase text-slate-600 mb-1">Exact Deliverables (Locked Scope)</label>
+                            <textarea id="contract-deliverables" required rows="2" placeholder="e.g., 2 Instagram Story sizes + 1 Print Ready PDF, source Figma link included." class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm"></textarea>
+                        </div>
+
+                        <div class="grid sm:grid-cols-3 gap-4">
+                            <div>
+                                <label class="block text-xs font-semibold uppercase text-slate-600 mb-1">Agreed Price (₹)</label>
+                                <input type="number" id="contract-price" required oninput="checkFairPriceInScope()" placeholder="500" class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold uppercase text-slate-600 mb-1">Max Free Revisions</label>
+                                <select id="contract-revisions" class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm bg-white">
+                                    <option value="2">Max 2 Revisions</option>
+                                    <option value="3">Max 3 Revisions</option>
+                                    <option value="1">Max 1 Revision</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold uppercase text-slate-600 mb-1">Deadline (Days)</label>
+                                <input type="number" id="contract-days" required min="1" max="30" value="3" class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm">
+                            </div>
+                        </div>
+
+                        <!-- Live Fair Price Warning Alert -->
+                        <div id="fair-price-warning" class="hidden bg-amber-50 border border-amber-300 text-amber-900 text-xs p-3 rounded-lg"></div>
+
+                        <!-- Protection Checkboxes -->
+                        <div class="bg-slate-50 p-3 rounded-lg border border-slate-200 space-y-2 text-xs text-slate-700">
+                            <label class="flex items-center gap-2">
+                                <input type="checkbox" required checked class="rounded text-indigo-600">
+                                <span><strong>Payment Protection:</strong> Lock 50% upfront deposit in Campus Escrow before freelancer begins work.</span>
+                            </label>
+                            <label class="flex items-center gap-2">
+                                <input type="checkbox" required checked class="rounded text-indigo-600">
+                                <span><strong>On-Time Guarantee:</strong> 10% late fee deducted if submitted after the agreed deadline without prior approval.</span>
+                            </label>
+                        </div>
+
+                        <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2.5 rounded-lg text-sm transition">
+                            Lock 50% Escrow & Start Active Gig Timer
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Right Column: Campus Fair-Price Reference Guide -->
+                <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm h-fit">
+                    <h3 class="font-bold text-base mb-1">Campus Fair-Price Guide</h3>
+                    <p class="text-xs text-slate-500 mb-4">Benchmarked with Startup-Cell mentors to prevent student underpricing.</p>
+                    <ul class="space-y-3 text-sm">
+                        <li class="flex justify-between pb-2 border-b border-slate-100">
+                            <span>Event Poster / Social Graphic</span>
+                            <span class="font-semibold text-indigo-600">₹300 – ₹600</span>
+                        </li>
+                        <li class="flex justify-between pb-2 border-b border-slate-100">
+                            <span>Landing Page / Web Fix</span>
+                            <span class="font-semibold text-indigo-600">₹800 – ₹2,000</span>
+                        </li>
+                        <li class="flex justify-between pb-2 border-b border-slate-100">
+                            <span>Reel / Event Aftermovie Edit</span>
+                            <span class="font-semibold text-indigo-600">₹500 – ₹1,200</span>
+                        </li>
+                        <li class="flex justify-between pb-2 border-b border-slate-100">
+                            <span>2-Hour Club Event Photography</span>
+                            <span class="font-semibold text-indigo-600">₹600 – ₹1,500</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= TAB 4: ACTIVE GIG TRACKER ================= -->
+        <section id="view-tracker" class="tab-view hidden">
+            <div class="mb-6">
+                <h2 class="text-xl font-bold">Active Gigs & Escrow Milestone Tracker</h2>
+                <p class="text-sm text-slate-500">Tracks live deadlines, revision counts, and releases the remaining 50% payment upon completion.</p>
+            </div>
+
+            <!-- Dynamic Active Contracts List -->
+            <div id="contracts-container" class="space-y-4"></div>
+        </section>
+
+    </main>
+
+    <!-- ================= MODAL: POST A NEW GIG ================= -->
+    <div id="post-gig-modal" class="fixed inset-0 bg-slate-900/50 hidden items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-xl max-w-md w-full p-6 shadow-xl">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="font-bold text-lg">Post a Campus Micro-Gig</h3>
+                <button onclick="togglePostGigModal(false)" class="text-slate-400 hover:text-slate-600 text-xl">&times;</button>
+            </div>
+            <form onsubmit="handleNewGigSubmit(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-slate-600 mb-1">Gig Title</label>
+                    <input type="text" id="new-gig-title" required placeholder="e.g., Need UI Designer for Hackathon App" class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-600 mb-1">Category</label>
+                        <select id="new-gig-category" class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm bg-white">
+                            <option value="Design">Design</option>
+                            <option value="Code">Code</option>
+                            <option value="Video Editing">Video Editing</option>
+                            <option value="Photography">Photography</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-600 mb-1">Budget (₹)</label>
+                        <input type="number" id="new-gig-budget" required placeholder="600" class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm">
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-600 mb-1">Client / Club Name</label>
+                        <input type="text" id="new-gig-client" required placeholder="e.g., Robotics Club" class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-600 mb-1">Delivery Time</label>
+                        <input type="text" id="new-gig-deadline" required placeholder="e.g., 3 Days" class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-slate-600 mb-1">Scope & Deliverables</label>
+                    <textarea id="new-gig-desc" required rows="2" placeholder="List exact files needed..." class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm"></textarea>
+                </div>
+                <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 rounded-lg text-sm">
+                    Publish Gig to Campus Board
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Link to our JavaScript file -->
+    <script src="app.js"></script>
+</body>
+</html>
